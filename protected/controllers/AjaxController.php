@@ -7,4 +7,11 @@ class AjaxController extends CController
 		if ( $name_exists ) { echo 'false'; } else { echo 'true'; }
 		exit;
 	}
+	
+	public function actionLogincheck()
+	{
+		$name_exists = User::model()->findByAttributes(array('name'=>$_GET['name']));
+		if ( $name_exists ) { echo 'false'; } else { echo 'true'; }
+		exit;
+	}
 }

@@ -2,15 +2,34 @@
 class SiteController extends CController
 {
 	private $_model;
+	private $is_login = false;
+	private $user;
 	
-	/**
-	 * Index action is the default action in a controller.
-	 */
+	public function filters()
+	{
+		return array(
+			'authFilter',
+		);
+	}
+ 
+	public function FilterAuthFilter($filterChain) {
+		$cookie = Yii::app()->request->getCookies();
+		if(isset($cookie['auth'])){
+			$user_exists = User::model()->findByAttributes(array('auth'=>$cookie['auth']->value));	
+			if($user_exists){
+				$this->is_login = true;
+				$this->user = $user_exists;
+			}
+		}
+		$filterChain->run();
+	}
+	
+	
 	public function actionIndex()
 	{
-		$user1 = User::model()->findByPk('15');
-		$this->render('index',array(
-			'user1'=>$user1,
-		));
+		if($this->is_login)
+			$this->render('true_index',array('user'=>$this->user));
+		else
+			$this->render('index');
 	}
 }

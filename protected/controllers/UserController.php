@@ -1,9 +1,31 @@
 <?php
 class UserController extends CController
 {	
+	private $is_login = false;
+	private $user;
+	
+	public function filters()
+	{
+		return array(
+			'authFilter',
+		);
+	}
+ 
+	public function FilterAuthFilter($filterChain) {
+		$cookie = Yii::app()->request->getCookies();
+		if(isset($cookie['auth'])){
+			$user_exists = User::model()->findByAttributes(array('auth'=>$cookie['auth']->value));	
+			if($user_exists){
+				$this->is_login = true;
+				$this->user = $user_exists;
+			}
+		}
+		$filterChain->run();
+	}
+	
 	public function actionIndex()
 	{
-
+		$this->redirect(Yii::app()->request->getBaseUrl(true));
 	}
 	
 	public function actionRegister()
@@ -18,9 +40,10 @@ class UserController extends CController
 				$model->email = $email;
 				$model->name = $name;
 				$model->password = $password;
+				$model->auth = md5($name);
 				if($model->save()){
-					self::save_user_cookie($name);
-					$this->redirect(array('index'));
+					self::save_user_cookie($model->auth);
+					$this->redirect(Yii::app()->request->getBaseUrl(true));
 				}
 			}
 		}
@@ -36,17 +59,27 @@ class UserController extends CController
 			if($name && $password){
 				$user_exists = User::model()->findByAttributes(array('name'=>$name,'password'=>$password));		
 				if($user_exists){
-					self::save_user_cookie($name);
-					$this->redirect(array('index'));
+					self::save_user_cookie(md5($name));
 				}
 			}
 		}
-		$this->render('login');
+		$this->redirect(Yii::app()->request->getBaseUrl(true));
+	}
+	
+	public function actionLogout()
+	{
+		self::delete_user_cookie("auth");
+		$this->redirect(Yii::app()->request->getBaseUrl(true));
 	}
 	
 	protected function save_user_cookie($name){
-		$cookie = new CHttpCookie('username',$name);
+		$cookie = new CHttpCookie('auth',$name);
 		$cookie->expire = time()+60*60*24;
-		Yii::app()->request->cookies['username']=$cookie;
+		Yii::app()->request->cookies['auth']=$cookie;
+	}
+	
+	protected function delete_user_cookie($name){
+		$cookie = Yii::app()->request->getCookies();
+		unset($cookie[$name]);
 	}
 }

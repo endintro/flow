@@ -38,7 +38,7 @@ legend{margin-bottom:0;}
 </form>
 
   
-<script src="<?php echo Yii::app()->baseUrl . '/js/jquery.validate.min.js'?>"></script>
+<script src="<?php  echo Yii::app()->baseUrl . '/js/jquery.validate.min.js'?>"></script>
 <script>
 	$(document).ready(function(){
 			jQuery.validator.addMethod("byteRangeLength", function(value, element, param) {   
