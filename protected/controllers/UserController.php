@@ -18,7 +18,7 @@ class UserController extends CController
 				$model->email = $email;
 				$model->name = $name;
 				$model->password = $password;
-				$model->auth = self::cookieSum($name.'endintro');
+				$model->auth = self::cookieSum($name.$password.'endintro');
 				if($model->save()){
 					self::save_user_cookie($model->auth);
 					$this->redirect(Yii::app()->request->getBaseUrl(true));
@@ -33,11 +33,11 @@ class UserController extends CController
 		$request = Yii::app()->getRequest();
 		if($request->isPostRequest){
 			$name = $request->getPost("name");
-			$password = md5($request->getPost("password"));
+			$password = $request->getPost("password");
 			if($name && $password){
-				$user_exists = User::model()->findByAttributes(array('name'=>$name,'password'=>$password));		
+				$user_exists = User::model()->findByAttributes(array('name'=>$name,'password'=>md5($password)));		
 				if($user_exists){
-					$auth = self::cookieSum($name.'endintro');
+					$auth = self::cookieSum($name.$password.'endintro');
 					self::save_user_cookie($auth);
 				}
 			}
