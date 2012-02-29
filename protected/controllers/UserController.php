@@ -1,28 +1,6 @@
 <?php
 class UserController extends CController
-{	
-	private $is_login = false;
-	private $user;
-	
-	public function filters()
-	{
-		return array(
-			'authFilter',
-		);
-	}
- 
-	public function FilterAuthFilter($filterChain) {
-		$cookie = Yii::app()->request->getCookies();
-		if(isset($cookie['auth'])){
-			$user_exists = User::model()->findByAttributes(array('auth'=>$cookie['auth']->value));	
-			if($user_exists){
-				$this->is_login = true;
-				$this->user = $user_exists;
-			}
-		}
-		$filterChain->run();
-	}
-	
+{		
 	public function actionIndex()
 	{
 		$this->redirect(Yii::app()->request->getBaseUrl(true));
@@ -40,7 +18,7 @@ class UserController extends CController
 				$model->email = $email;
 				$model->name = $name;
 				$model->password = $password;
-				$model->auth = md5($name);
+				$model->auth = self::cookieSum($name.'endintro');
 				if($model->save()){
 					self::save_user_cookie($model->auth);
 					$this->redirect(Yii::app()->request->getBaseUrl(true));
@@ -59,7 +37,8 @@ class UserController extends CController
 			if($name && $password){
 				$user_exists = User::model()->findByAttributes(array('name'=>$name,'password'=>$password));		
 				if($user_exists){
-					self::save_user_cookie(md5($name));
+					$auth = self::cookieSum($name.'endintro');
+					self::save_user_cookie($auth);
 				}
 			}
 		}
@@ -81,5 +60,9 @@ class UserController extends CController
 	protected function delete_user_cookie($name){
 		$cookie = Yii::app()->request->getCookies();
 		unset($cookie[$name]);
+	}
+	
+	protected function cookieSum($str){
+		return md5($str); 
 	}
 }
