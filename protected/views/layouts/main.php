@@ -18,5 +18,9 @@
 
 </div><!-- page -->
 
+<div id="footer">
+	<a href="<?php  echo Yii::app()->request->getBaseUrl(true) ?>"><i class="icon-home icon-white"></i></a>
+</div>
+
 </body>
 </html>

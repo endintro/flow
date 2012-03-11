@@ -1,1 +1,11 @@
 .clear{clear:both}
+
+#footer {
+    background: none repeat scroll 0 0 #333333;
+    bottom: 0;
+    height: 18px;
+    position: fixed;
+    width: 100%;
+    padding-top:4px;
+}
+#footer a{display:block; float:right; margin-right:20px;}

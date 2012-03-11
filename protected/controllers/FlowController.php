@@ -32,11 +32,12 @@ class FlowController extends CController
 			if($request->getParam("f")){
 				$flow_id = $request->getParam("f");
 				$flow = Flow::model()->findByPk($flow_id);
-				if($flow){
+				if($flow && ($flow->user_id == $this->user->id)){
 					if($request->isPostRequest) self::saveWater($request,$flow_id);
-					$waters = Water::model()->findAllByAttributes(array('flow_id'=>$flow_id));
+					$waters = Water::model()->findAllByAttributes(array('flow_id'=>$flow_id,'is_display'=>1));
 					$this->render("index",array("flow"=>$flow,"waters"=>$waters));
-				}
+				}else 
+					$this->redirect(Yii::app()->request->getBaseUrl(true));	
 			}
 		}else
 			$this->redirect(Yii::app()->request->getBaseUrl(true));
@@ -54,13 +55,13 @@ class FlowController extends CController
 					$model->user_id = $this->user->id;
 					$model->name = $name;
 					$model->description = $description;
+					$model->is_actived = 1;
 					$model->create_time = date("Y-m-d H:i:s");
 					if($model->save()){
 						$this->redirect(Yii::app()->request->getBaseUrl(true).'/flow/?f='.$model->id);
 					}
 				}
 			}
-			$this->render('create',array('user'=>$this->user));
 		}else
 			$this->redirect(Yii::app()->request->getBaseUrl(true));
 	}
@@ -70,11 +71,30 @@ class FlowController extends CController
 		$model=new Water;
 		$model->user_id = $this->user->id;
 		$model->flow_id = $flow_id;
-		$model->water 	= $water;
+		$model->water 	= trim($water);
 		$model->create_time = date("Y-m-d H:i:s");
 		if($model->save()){
 			$this->redirect(Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id);
 		}
-		
+	}
+	
+	public function actionDeleteWater()
+	{
+		if($this->is_login){
+			$request = Yii::app()->getRequest();
+			$flow_id = $_GET["f"];
+			if($request->isPostRequest){
+				$water_id = $request->getPost("water_id");
+				if(is_numeric($water_id)){
+					$water = Water::model()->findByPk($water_id);
+					if($water){
+						$water->is_display = 0;
+						$water->save();
+					}
+				}
+			}
+			$this->redirect(Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id);
+		}else
+			$this->redirect(Yii::app()->request->getBaseUrl(true));
 	}
 }
