@@ -18,7 +18,7 @@ legend{margin-bottom:0;}
 		<?php 
 			if($waters){
 				foreach (array_reverse($waters) as $water){
-					echo '<div class="row">'.n2p($water->water)."</div>";
+					echo '<div class="row section"><div class="article">'.n2p($water->water).'</div><div class="footer"></div></div>';
 				}
 			}else{
 				echo '<div class="row">暂时没有条目,鼠标移至右侧空白处添加 <i class="icon-arrow-right"></i></div>';
@@ -53,7 +53,7 @@ legend{margin-bottom:0;}
 					$('#new_water_form').fadeOut();
 				}
 			});
-	})
+	});
 	
 	function trim(str){
 		return str.replace(/(^\s*)|(\s*$)/g, "");
