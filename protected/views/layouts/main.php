@@ -11,27 +11,8 @@
 </head>
 
 <body>
-
-<div class="container" id="page">
-
+	<div class="container" id="page">
 	<?php echo $content; ?>
-
-</div><!-- page -->
-
-<div id="footer">
-	<a href="<?php  echo Yii::app()->request->getBaseUrl(true) ?>"><i class="icon-home icon-white"></i></a>
-	<a href="<?php  echo Yii::app()->request->getBaseUrl(true) ?>"><i class="icon-search icon-white"></i></a>
-</div>
-<script>
-$(document).ready(function(){
-	$("#footer a i").hover(function(){
-			$(this).css("opacity","0.3");
-		},function(){
-			$(this).css("opacity","1");
-	});
-	
-});
-</script>
-
+	</div><!-- page -->
 </body>
 </html>

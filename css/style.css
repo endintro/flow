@@ -1,23 +1,3 @@
 .clear{clear:both}
 
-#footer {
-    background: none repeat scroll 0 0 #333333;
-    bottom: 0;
-    height: 16px;
-    position: fixed;
-    width: 100%;
-    padding-top:4px;
-}
-#footer a{display:block; float:right; margin-right:10px;}
 
-
-.container .section {
-    border-bottom: 1px dotted #AAAAAA;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding-top: 14px;
-    padding-bottom: 14px;
-    width: 448px;
-}
-
-.container .section .article p{line-height:22px; margin:0 0 14px;}
