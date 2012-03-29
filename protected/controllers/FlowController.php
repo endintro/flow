@@ -65,7 +65,7 @@ class FlowController extends CController
 			if($request->isPostRequest){
 				$name = $request->getPost("name");
 				$description = $request->getPost("description");
-				if($name && $description){
+				if(!empty($name)){
 					$model=new Flow;
 					$model->user_id = $this->user->id;
 					$model->name = $name;
@@ -109,7 +109,16 @@ class FlowController extends CController
 		$page = 1;
 		if(Yii::app()->getRequest()->getParam("page")) $page = intval(Yii::app()->getRequest()->getParam("page"));	
 	 	if($page>$PageCount|$page==0) $page = 1;
-	 	if($page == 1) return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page+1).'">下一页 »</a>';
+	 	if($page == 1){
+	 		$sql = "select count(*) as num from water where flow_id = '$flow_id' and is_display = 1 ";
+			$res = Yii::app()->db->createCommand($sql)->queryRow();
+			$waters_num = $res["num"];
+	 		if($waters_num <= PAGESIZE){
+	 			return '';
+	 		}else{
+	 			return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page+1).'">下一页 »</a>';
+	 		}
+	 	}
 	 	if($page == $PageCount) return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page-1).'">« 上一页</a>';
 	 	return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page-1).'">« 上一页</a> | <a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page+1).'">下一页 »</a>';
 	}
