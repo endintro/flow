@@ -26,11 +26,15 @@ class ShowcaseController extends CController
 	
 	
 	public function actionIndex(){
+		$list = array("private","silence");
 		$request = Yii::app()->getRequest();
 		if($request->getParam("p")){
 			$project = $request->getParam("p");
-			$list = array("private");
 			if(in_array( $project, $list)) $this->render($project);
+			else $this->render("index",array("list"=>$list));
+			
+		}else{
+			$this->render("index",array("list"=>$list));
 		}
 	}
 }
