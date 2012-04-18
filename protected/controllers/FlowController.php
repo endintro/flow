@@ -68,7 +68,6 @@ class FlowController extends CController
 				
 				$water_tags = self::getWaterTags($waters);
 				
-				
 				$is_owner = false;
 				if($this->is_login && $flow->user_id == $this->user->id){
 				 	//save data
