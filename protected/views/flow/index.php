@@ -1,6 +1,17 @@
 <style>
 .row{margin-top:20px;}
 legend{margin-bottom:0;}
+.popover{text-align:center;}
+.popover-inner{width:290px;}
+.popover-title{display:none}
+
+#header {position: fixed;right: 0;top: 200px;}
+#header a {background: url("<?php echo Yii::app()->request->baseUrl; ?>/img/nanyao/nanyao-sprite.png") no-repeat scroll 0 -148px transparent;display: block;float: right;height: 142px;width: 77px;}
+#header a:hover {background: url("<?php echo Yii::app()->request->baseUrl; ?>/img/nanyao/nanyao-sprite.png") no-repeat scroll 0 -340px transparent;}
+
+
+h1 a{color:#333;}
+h1 a:hover{text-decoration:none; color:#666;}
 
 #new_water{padding-top:15px; height:300px;}
 #new_water_form{display:none;}
@@ -16,7 +27,7 @@ legend{margin-bottom:0;}
 .container .section .footer a{float:right; margin-left:10px; color:#376B6D;}
 .container .section .footer a:hover{text-decoration:none; color:#E16B8C}
 .container .section .footer .remove{display:none}
-.container .section .footer .remove{opacity:0.7;}
+.container .section .footer .remove:hover{opacity:0.7;}
 .container .pagenav{margin:0 0 30px -20px;}
 .container .pagenav a{color:#376B6D;}
 .container .pagenav a:hover{text-decoration:none; color:#E16B8C}
@@ -25,10 +36,15 @@ legend{margin-bottom:0;}
 #footer a{display:block; float:right; margin-right:10px;}
 </style>
 
-
+<?php if($flow->id != 1){?>
 <div class="row">
 	<h1>Flow @ <?php echo $flow->name?></h1>
 </div>
+<?php }else{?>
+<div id="header">
+	<a href="<?php echo Yii::app()->request->baseUrl; ?>/flow/?f=1"></a>
+</div>
+<?php }?>
 
 <div class="row">
 	<div class="span6">
@@ -38,7 +54,7 @@ legend{margin-bottom:0;}
 					echo '<div class="row section"><div class="article">'.n2p($water->water).'</div><div class="footer">';
 					if(isset($water_tags[$water->id])){
 						foreach ($water_tags[$water->id] as $tag){
-							echo '<a href="#" >'.$tag->name.'</a>';
+							echo '<a href="'.Yii::app()->request->baseUrl.'/flow/?f='.$flow->id.'&t='.$tag->name.'" >'.$tag->name.'</a>';
 						}
 					}
 					if($is_owner){
@@ -98,10 +114,14 @@ legend{margin-bottom:0;}
 				}
 			});
 
-		//move footer outside container
+		//move outside container
 		var footer = $("#footer").clone();
 		$("#footer").remove();
 		footer.appendTo("body");
+
+		var header = $("#header").clone();
+		$("#header").remove();
+		header.prependTo("body");
 
 		$("#footer a i").hover(function(){
 			$(this).css("opacity","0.3");
@@ -128,6 +148,7 @@ legend{margin-bottom:0;}
 				  }
 			});
 		});
+		
 	});
 	
 	function trim(str){

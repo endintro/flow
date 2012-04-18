@@ -8,5 +8,4 @@
         <input type="password" name="password" placeholder="Password" class="input-medium">
 
         <button class="btn" type="submit">Sign in</button>
-        <a class="offset5" href="<?php  echo Yii::app()->request->getBaseUrl(true).'/user/register' ?>">Register</a>
      </form>

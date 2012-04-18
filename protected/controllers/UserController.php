@@ -53,7 +53,7 @@ class UserController extends CController
 	
 	protected function save_user_cookie($name){
 		$cookie = new CHttpCookie('auth',$name);
-		$cookie->expire = time()+60*60*24;
+		$cookie->expire = time()+60*60*24*30;
 		Yii::app()->request->cookies['auth']=$cookie;
 	}
 	

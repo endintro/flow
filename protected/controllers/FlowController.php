@@ -6,6 +6,8 @@ class FlowController extends CController
 	private $_model;
 	private $is_login = false;
 	private $user;
+	private $PageCount;
+	private $WaterCount;
 	
 	public function filters()
 	{
@@ -29,33 +31,61 @@ class FlowController extends CController
 	
 	public function actionIndex()
 	{
-		if($this->is_login){
-			$request = Yii::app()->getRequest();
-			if($request->getParam("f")){
-				$flow_id = $request->getParam("f");
-				$flow = Flow::model()->findByPk($flow_id);
-				if($flow){
-					//fetch data
-					$waters = self::findWatersByPage($flow_id);
-					$water_tags = self::getWaterTags($waters);
+		$request = Yii::app()->getRequest();
+		if($request->getParam("f")){
+			$flow_id = $request->getParam("f");
+			$flow = Flow::model()->findByPk($flow_id);
+			if($flow){
+				//fetch data
+				if($request->getParam("s")){
+					$keyword = "%".$request->getParam("s")."%";
+					$sql = "select count(*) as num from water where flow_id = '$flow_id' and is_display = 1 and water like '$keyword'";
+					self::pageCount($sql);
+					$sql = "select * from water where flow_id = '$flow_id' and is_display = 1 and water like '$keyword' order by create_time desc ";
+					$waters = self::findWatersByPage($sql);
+					$keyword = "&s=".$request->getParam("s");
+					$page_nav = self::pageNav($flow_id, $keyword);
+				}else if($request->getParam("t")){
+					$tag = $request->getParam("t");
+					$res = Tag::model()->findByAttributes(array('name'=>$tag));
+					if(!empty($res)){
+						$waterids = RelWaterTag::model()->findAllByAttributes(array('tag_id'=>$res->id));
+						$waters = array();
+						foreach ($waterids as $val){
+							$water = Water::model()->findByPk($val->water_id);
+							if($water->flow_id == $flow_id)
+							$waters[] = $water;
+						}
+					}
+					$page_nav = "";
+				}else{
+					$sql = "select count(*) as num from water where flow_id = '$flow_id' and is_display = 1 ";
+					self::pageCount($sql);
+					$sql = "select * from water where flow_id = '$flow_id' and is_display = 1 order by create_time desc ";
+					$waters = self::findWatersByPage($sql);
 					$page_nav = self::pageNav($flow_id);
-					
-					$is_owner = false;
-					if($flow->user_id == $this->user->id){
-					 	//save data
-						if($request->isPostRequest) self::saveWater($request,$flow_id);
-						$is_owner = true;
-					 }
-					$this->render("index",
-								array("flow"=>$flow,
-								"waters"=>$waters,
-								"water_tags"=>$water_tags,
-								"page_nav"=>$page_nav,
-								"is_owner"=>$is_owner)
-					);
-				}else $this->redirect(Yii::app()->request->getBaseUrl(true));	
+				}
+				
+				$water_tags = self::getWaterTags($waters);
+				
+				
+				$is_owner = false;
+				if($this->is_login && $flow->user_id == $this->user->id){
+				 	//save data
+					if($request->isPostRequest) self::saveWater($request,$flow_id);
+					$is_owner = true;
+				 }
+				$this->render("index",
+							array("flow"=>$flow,
+							"waters"=>$waters,
+							"water_tags"=>$water_tags,
+							"page_nav"=>$page_nav,
+							"is_owner"=>$is_owner)
+				);
 			}else $this->redirect(Yii::app()->request->getBaseUrl(true));	
-		}else $this->redirect(Yii::app()->request->getBaseUrl(true));
+		}else 
+		$this->redirect(Yii::app()->request->getBaseUrl(true));	
+	
 	}
 	
 	public function actionCreate()
@@ -81,46 +111,41 @@ class FlowController extends CController
 			$this->redirect(Yii::app()->request->getBaseUrl(true));
 	}
 	
+	
 	/*---------------------page start---------------------------*/
-	protected function findWatersByPage($flow_id){	
+	protected function pageCount($sql){	
+		$res = Yii::app()->db->createCommand($sql)->queryRow();
+		$waters_num = $res["num"];
 		$PageSize = PAGESIZE;
-		$PageCount = self::pageCount($flow_id);
+		$this->WaterCount = $waters_num;
+		$this->PageCount = ceil($waters_num/$PageSize);
+	}
+	
+	protected function findWatersByPage($sql){	
+		$PageSize = PAGESIZE;	
 		$page = 1;
 		if(Yii::app()->getRequest()->getParam("page")) $page = intval(Yii::app()->getRequest()->getParam("page"));	
-	 	if($page>$PageCount|$page==0) $page = 1;
-    	
-       	$sql = "select * from water where flow_id = '$flow_id' and is_display = 1 order by create_time desc limit ".($page-1)*($PageSize).",$PageSize";
+	 	if($page>$this->PageCount|$page==0) $page = 1;
+    	$sql = $sql."limit ".($page-1)*($PageSize).",$PageSize"; 	
         $waters = Water::model()->findAllBySql($sql);
         return $waters;
 	}
 	
-	protected function pageCount($flow_id){
-		$sql = "select count(*) as num from water where flow_id = '$flow_id' and is_display = 1 ";
-		$res = Yii::app()->db->createCommand($sql)->queryRow();
-		$waters_num = $res["num"];
-		$PageSize = PAGESIZE;
-		$PageCount = ceil($waters_num/$PageSize);
-		return $PageCount;
-	}
-	
-	protected function pageNav($flow_id){
-		$PageSize = PAGESIZE;
-		$PageCount = self::pageCount($flow_id);
+	protected function pageNav($flow_id, $keyword = false){
+		if(!$keyword) $keyword = "";
+		$PageSize = PAGESIZE;	
 		$page = 1;
 		if(Yii::app()->getRequest()->getParam("page")) $page = intval(Yii::app()->getRequest()->getParam("page"));	
-	 	if($page>$PageCount|$page==0) $page = 1;
+	 	if($page>$this->PageCount|$page==0) $page = 1;
 	 	if($page == 1){
-	 		$sql = "select count(*) as num from water where flow_id = '$flow_id' and is_display = 1 ";
-			$res = Yii::app()->db->createCommand($sql)->queryRow();
-			$waters_num = $res["num"];
-	 		if($waters_num <= PAGESIZE){
+	 		if($this->WaterCount <= PAGESIZE){
 	 			return '';
 	 		}else{
-	 			return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page+1).'">下一页 »</a>';
+	 			return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page+1).$keyword.'">下一页 »</a>';
 	 		}
 	 	}
-	 	if($page == $PageCount) return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page-1).'">« 上一页</a>';
-	 	return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page-1).'">« 上一页</a> | <a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page+1).'">下一页 »</a>';
+	 	if($page == $this->PageCount) return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page-1).$keyword.'">« 上一页</a>';
+	 	return '<a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page-1).$keyword.'">« 上一页</a> | <a href="'.Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id.'&page='.($page+1).$keyword.'">下一页 »</a>';
 	}
 	/*---------------------page end---------------------------*/
 	
