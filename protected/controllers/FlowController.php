@@ -57,6 +57,7 @@ class FlowController extends CController
 							$waters[] = $water;
 						}
 					}
+					$waters = array_reverse($waters);
 					$page_nav = "";
 				}else{
 					$sql = "select count(*) as num from water where flow_id = '$flow_id' and is_display = 1 ";
@@ -74,7 +75,7 @@ class FlowController extends CController
 					if($request->isPostRequest) self::saveWater($request,$flow_id);
 					$is_owner = true;
 				 }
-				$this->render("index",
+				$this->render("flow",
 							array("flow"=>$flow,
 							"waters"=>$waters,
 							"water_tags"=>$water_tags,
