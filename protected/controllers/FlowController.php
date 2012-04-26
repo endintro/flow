@@ -83,8 +83,14 @@ class FlowController extends CController
 							"is_owner"=>$is_owner)
 				);
 			}else $this->redirect(Yii::app()->request->getBaseUrl(true));	
-		}else 
-		$this->redirect(Yii::app()->request->getBaseUrl(true));	
+		}else{
+			if($this->is_login){
+				$flows = Flow::model()->findAllByAttributes(array('user_id'=>$this->user->id,'is_actived'=>1));
+				$this->render('home',array('user'=>$this->user,'flows'=>$flows));
+			}else
+				$this->redirect(Yii::app()->request->getBaseUrl(true)."/user/login?redirect=".Yii::app()->request->getBaseUrl(true)."/flow");
+		}
+		
 	
 	}
 	

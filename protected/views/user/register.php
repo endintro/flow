@@ -1,11 +1,25 @@
+<?php $this->pageTitle = '注册新用户';?>
 <style>
+body{background:#eff0e8;}
+#window {bottom: 450px; width:152px; height:160px; position:fixed;}
+#notice {bottom:40px; width:65px; height:131px; position:fixed; z-index:2;}
+#notice img{position:relative; left:800px;}
+#footer {background: url("<?php echo Yii::app()->request->baseUrl; ?>/img/showcase/private/floor.png") repeat-x; bottom: 0; height:63px; position:fixed; width:100%; z-index:1;}
+
+form#register{bottom: 320px; position:fixed; margin-left:200px;}
 .form-actions{background:none;}
-legend{margin-bottom:0;}
+
 </style>
+
+
+
+<div id="window"><img src="<?php echo Yii::app()->request->baseUrl; ?>/img/showcase/private/window.jpg" /></div>
+<div id="notice"><img src="<?php echo Yii::app()->request->baseUrl; ?>/img/showcase/private/notice.png" /></div>
+<div id="footer"></div>
+
 
 <form action="" method="post" id="register" class="form-horizontal">
 	<fieldset>
-		<legend>Register</legend>
 		<div class="control-group">
 			<label for="input02" class="control-label">Login Name</label>
 			<div class="controls">
@@ -20,7 +34,7 @@ legend{margin-bottom:0;}
 			<div class="controls">
 				<input type="password" name="password" class="input-large">
 				<p class="help-block">
-					To form a secure password, we recommend including a combination of letters and numbers.
+					Recommend including a combination of letters and numbers
 				</p>
 			</div>
 		</div>
@@ -28,16 +42,24 @@ legend{margin-bottom:0;}
 			<label for="input01" class="control-label">Email</label>
 			<div class="controls">
 				<input type="text" name="email" class="input-large">
+				<input type="hidden" name="redirect" value="<?php echo $redirect?>">
 			</div>
 		</div>
 		<div class="form-actions">
-			<input class="btn btn-primary" type="submit" value="Submit" />
+			<input class="btn" type="submit" value="Register" />
 			<input class="btn" type="reset" value="Reset" />
 		</div>
 	</fieldset>
 </form>
 
-  
+<script>
+	$(document).ready(function(){		
+		//move footer outside container
+		var footer = $("#footer").clone();
+		$("#footer").remove();
+		footer.appendTo("body");	
+	});
+</script>
 <script src="<?php  echo Yii::app()->baseUrl . '/js/jquery.validate.min.js'?>"></script>
 <script>
 	$(document).ready(function(){

@@ -27,10 +27,6 @@ class SiteController extends CController
 	
 	public function actionIndex()
 	{
-		if($this->is_login){
-			$flows = Flow::model()->findAllByAttributes(array('user_id'=>$this->user->id,'is_actived'=>1));
-			$this->render('index',array('user'=>$this->user,'flows'=>$flows));
-		}else
-			$this->render('login');
+		$this->render('index');
 	}
 }

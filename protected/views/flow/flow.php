@@ -1,3 +1,4 @@
+<?php $this->pageTitle = 'Flow - '.$flow->name;?>
 <style>
 .row{margin-top:20px;}
 legend{margin-bottom:0;}
@@ -98,7 +99,7 @@ h1 a:hover{text-decoration:none; color:#666;}
 
 
 <div id="footer">
-	<a href="<?php  echo Yii::app()->request->getBaseUrl(true) ?>"><i class="icon-home icon-white"></i></a>
+	<a href="<?php  echo Yii::app()->request->getBaseUrl(true)."/flow" ?>"><i class="icon-home icon-white"></i></a>
 	<a href="<?php  echo Yii::app()->request->getBaseUrl(true) ?>"><i class="icon-heart icon-white"></i></a>
 	<a href="<?php  echo Yii::app()->request->getBaseUrl(true) ?>"><i class="icon-search icon-white"></i></a>
 </div>
