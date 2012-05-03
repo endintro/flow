@@ -1,4 +1,4 @@
-<?php $this->pageTitle = 'Flow - '.$flow->name;?>
+<?php $this->pageTitle = $flow->name;?>
 <style>
 .row{margin-top:20px;}
 legend{margin-bottom:0;}
@@ -6,8 +6,9 @@ legend{margin-bottom:0;}
 .popover-inner{width:290px;}
 .popover-title{display:none}
 
-h1 a{color:#333;}
-h1 a:hover{text-decoration:none; color:#666;}
+#header {position: fixed;right: 0;top: 200px;}
+#header a {background: url("<?php echo Yii::app()->request->baseUrl; ?>/img/nanyao/nanyao-sprite.png") no-repeat scroll 0 -148px transparent;display: block;float: right;height: 142px;width: 77px;}
+#header a:hover {background: url("<?php echo Yii::app()->request->baseUrl; ?>/img/nanyao/nanyao-sprite.png") no-repeat scroll 0 -340px transparent;}
 
 #new_water{padding-top:15px; height:300px;}
 #new_water_form{display:none;}
@@ -30,14 +31,11 @@ h1 a:hover{text-decoration:none; color:#666;}
 
 #footer {background: none repeat scroll 0 0 #333333;bottom: 0;height: 16px;position: fixed;width: 100%;padding-top:4px;}
 #footer a{display:block; float:right; margin-right:10px;}
-
-#search{position:fixed; bottom:20px;}
-#search a{float:left;display:block;}
 </style>
 
 
-<div class="row">
-	<h1>Flow @ <?php echo $flow->name?></h1>
+<div id="header">
+	<a href="<?php echo Yii::app()->request->baseUrl; ?>/nanyao"></a>
 </div>
 
 <div class="row">
@@ -48,7 +46,7 @@ h1 a:hover{text-decoration:none; color:#666;}
 					echo '<div class="row section"><div class="article">'.n2p($water->water).'</div><div class="footer">';
 					if(isset($water_tags[$water->id])){
 						foreach ($water_tags[$water->id] as $tag){
-							echo '<a href="'.Yii::app()->request->baseUrl.'/flow/?f='.$flow->id.'&t='.$tag->name.'" >'.$tag->name.'</a>';
+							echo '<a href="'.Yii::app()->request->baseUrl.'/nanyao/?t='.$tag->name.'" >'.$tag->name.'</a>';
 						}
 					}
 					if($is_owner){

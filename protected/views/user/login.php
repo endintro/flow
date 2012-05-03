@@ -6,7 +6,7 @@ body{background:#eff0e8;}
 #notice img{position:relative; left:800px;}
 #footer {background: url("<?php echo Yii::app()->request->baseUrl; ?>/img/showcase/private/floor.png") repeat-x; bottom: 0; height:63px; position:fixed; width:100%; z-index:1;}
 
-form#login{bottom: 480px; position:fixed; margin-left:380px;}
+form#login{bottom: 480px; position:fixed; margin-left:450px;}
 .form-actions{background:none;}
 a#register{margin-left:20px;}
 </style>
@@ -23,8 +23,7 @@ a#register{margin-left:20px;}
         <input type="password" name="password" placeholder="Password" class="input-medium">
 		<input type="hidden" name="redirect" value="<?php echo $redirect?>">
         <button class="btn" type="submit">Sign in</button>
-        <a id="register" href="<?php echo Yii::app()->baseUrl .'/user/register?redirect='.$redirect ?>">Register</a>
-     </form>
+</form>
 
 <script>
 	$(document).ready(function(){		
