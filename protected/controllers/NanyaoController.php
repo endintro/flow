@@ -157,7 +157,7 @@ class NanyaoController extends CController
 			$model->create_time = date("Y-m-d H:i:s");
 			if($model->save()){
 				self::saveTags($request, $model->id);
-				$this->redirect(Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id);
+				$this->redirect(Yii::app()->request->getBaseUrl(true).'/nanyao');
 			}
 		}
 	}

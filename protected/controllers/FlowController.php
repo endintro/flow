@@ -103,6 +103,7 @@ class FlowController extends CController
 				$description = $request->getPost("description");
 				if(!empty($name)){
 					$model=new Flow;
+					$model->type_id = 1;
 					$model->user_id = $this->user->id;
 					$model->name = $name;
 					$model->description = $description;
@@ -165,13 +166,13 @@ class FlowController extends CController
 			$model->water 	= $water;
 			$model->create_time = date("Y-m-d H:i:s");
 			if($model->save()){
-				self::saveTags($request, $model->id);
+				self::saveTags($request, $flow_id, $model->id);
 				$this->redirect(Yii::app()->request->getBaseUrl(true).'/flow/?f='.$flow_id);
 			}
 		}
 	}
 	
-	protected function saveTags($request,$water_id){
+	protected function saveTags($request,$flow_id,$water_id){
 		$tags = trim($request->getPost("tags"));
 		if(!empty($tags)){
 			$tag_arr = explode(",",$tags);
@@ -180,19 +181,20 @@ class FlowController extends CController
 				if(!empty($tag)){
 					$is_exist = Tag::model()->findByAttributes(array('name'=>$tag));
 					if($is_exist){ 
-						self::saveRelWaterTag($water_id, $is_exist->id);
+						self::saveRelWaterTag($flow_id, $water_id, $is_exist->id);
 					}else{
 						$model=new Tag;
 						$model->name = $tag;
-						if($model->save()) self::saveRelWaterTag($water_id, $model->id);
+						if($model->save()) self::saveRelWaterTag($flow_id, $water_id, $model->id);
 					}
 				}
 			}
 		}
 	}
 	
-	protected function saveRelWaterTag($water_id,$tag_id){
+	protected function saveRelWaterTag($flow_id,$water_id,$tag_id){
 		$model=new RelWaterTag;
+		$model->flow_id = $flow_id;
 		$model->water_id = $water_id;
 		$model->tag_id = $tag_id;
 		$model->save();

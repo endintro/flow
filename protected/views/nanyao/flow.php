@@ -14,14 +14,14 @@ legend{margin-bottom:0;}
 #new_water_form{display:none;}
 #new_water .form-horizontal .controls{margin-left:60px;}
 #new_water .form-horizontal .form-actions{background:none; border-top:none;padding-left:60px;}
-#new_water .input-xlarge{width:360px;}
+#new_water .input-xlarge{width:360px; font-size:1.1em;}
 #new_water .tags{width:270px}
 #new_water #sub{margin-left:20px;}
 
 .container .section{border-bottom: 1px dotted #AAAAAA;margin-top: 10px;margin-bottom: 10px;padding-top: 14px;padding-bottom: 14px;width: 448px;}
-.container .section .article p{line-height:22px; margin:0 0 14px;}
+.container .section .article p{line-height:22px; margin:0 0 14px; font-size:1.1em;}
 .container .section .article blockquote{font-size:12px;}
-.container .section .footer a{float:right; margin-left:10px; color:#376B6D;}
+.container .section .footer a{float:right; margin-left:10px; color:#376B6D; text-shadow:0 1px 1px #eee;}
 .container .section .footer a:hover{text-decoration:none; color:#E16B8C}
 .container .section .footer .remove{display:none}
 .container .section .footer .remove:hover{opacity:0.7;}
